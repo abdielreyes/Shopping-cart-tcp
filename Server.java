@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -37,11 +38,16 @@ public class Server{
 				System.out.println("Connection from:\n"+serverSocket);
 
 				ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-
+				ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 
 				Database db = new Database();
 				oos.writeObject(db.getProducts());
-						
+
+				ArrayList<Product> boughtProducts = (ArrayList<Product>)ois.readObject();
+				for(Product p : boughtProducts){
+					db.buyProduct(p.getId(),1);
+				}
+				db.printProducts();
 				
 				socket.close();
 				oos.close();

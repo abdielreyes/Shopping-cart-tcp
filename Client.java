@@ -86,8 +86,10 @@ public class Client{
 		System.out.println("Proceed with checkout? yN");
 		String op = sc.nextLine();
 		if(op.equalsIgnoreCase("y")){
+
 			try {
 				oos.writeObject(toBuy);
+				shoppingCart.clear();
 			} catch (Exception e) {
 				System.out.println("Error buying products"+e);
 			}

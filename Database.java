@@ -69,10 +69,10 @@ public class Database{
 
 				FileOutputStream fos = new FileOutputStream(db_file);
 				ObjectOutputStream oos = new ObjectOutputStream(fos);
+				
 				oos.writeObject(products);
 				oos.close();
 				fos.close();
-				
 			}
 
 			return pd;

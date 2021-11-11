@@ -51,6 +51,9 @@ public class ShoppingCart{
 			System.out.println(i.toString());
 		}
 	}
+	void clear(){
+		this.cart = new HashMap<String, Item>();
+	}
 	ArrayList<Product> checkout(){
 		ArrayList<Item> products = new ArrayList<Item>(cart.values());
 		ArrayList<Product> toBuy = new ArrayList<Product>();
