@@ -47,6 +47,7 @@ public class Database{
 			oos.close();
 			fos.close();
 				
+			return true;
 		} catch (Exception e) {
 			System.out.println("Error deleting product"+e);
 		}
@@ -62,14 +63,14 @@ public class Database{
 			ois.close();
 			fis.close();
 			Product pd = products.get(productId);
-
+			
 			if(pd.getStock()-many >= 0){
 				pd.setStock(pd.getStock() - many);
 				products.put(pd.getId(), pd);
 
 				FileOutputStream fos = new FileOutputStream(db_file);
 				ObjectOutputStream oos = new ObjectOutputStream(fos);
-				
+				System.out.println("A "+pd.getName()+" has been bought!");
 				oos.writeObject(products);
 				oos.close();
 				fos.close();
@@ -92,8 +93,8 @@ public class Database{
 			fis.close();
 			Product pd = products.get(productId);
 
-			if(pd.getStock()+many >= 0){
-				pd.setStock(pd.getStock() + many);
+			if(many >= 0){
+				pd.setStock(many);
 				products.put(pd.getId(), pd);
 
 				FileOutputStream fos = new FileOutputStream(db_file);
@@ -103,8 +104,10 @@ public class Database{
 				oos.close();
 				fos.close();
 				
+			}else{
+				System.out.println("Only positive stock!");
+				return null;
 			}
-
 			return pd;
         }catch (Exception e) {
 			System.out.println(e);

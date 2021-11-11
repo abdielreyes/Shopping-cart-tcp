@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import javax.swing.JOptionPane;
 
 
 public class Client{
@@ -14,26 +13,27 @@ public class Client{
 	private Socket socket;
 	private HashMap<String, Product> products;
 	private ShoppingCart shoppingCart;
-	Scanner sc = new Scanner(System.in);
-	ObjectInputStream ois;
-	ObjectOutputStream oos;
+	private Scanner sc;
+	private ObjectInputStream ois;
+	private ObjectOutputStream oos;
+
 	public static void main(String[] args){
 		Client c = new Client();
 		c.init();
-
-
+	}
+	public Client(){
+		sc = new Scanner(System.in);
 	}
 	void init(){
 		try{
 			socket = new Socket(host, port);
 			ois = new ObjectInputStream(socket.getInputStream());
-			
+			oos = new ObjectOutputStream(socket.getOutputStream());
 			products = (HashMap<String, Product>) ois.readObject();
 			shoppingCart = new ShoppingCart();
-
-			printProducts();
 			menu();
 			ois.close();
+			oos.close();
 			socket.close();
 		}catch(Exception e){
 			System.out.println(e);
@@ -82,14 +82,15 @@ public class Client{
 		}
 	}
 	void checkout(){
-		ArrayList<Product> toBuy = shoppingCart.checkout();
+		ArrayList<String> toBuy = shoppingCart.checkout();
 		System.out.println("Proceed with checkout? yN");
 		String op = sc.nextLine();
 		if(op.equalsIgnoreCase("y")){
-
 			try {
 				oos.writeObject(toBuy);
+				products = (HashMap<String, Product>) ois.readObject();
 				shoppingCart.clear();
+
 			} catch (Exception e) {
 				System.out.println("Error buying products"+e);
 			}

@@ -21,18 +21,72 @@ public class Server{
 	private ObjectInputStream InputStream;
 	private ObjectOutputStream OutputStream;
 	private static final int port = 8081;
+	private Scanner sc;
+	private Database db;
 	public static void main(String[] args){
 		Server s = new Server();
 	//	s.createProduct();
-		s.init();
+		s.menu();
 	}
 	public Server(){
-		
+		sc = new Scanner(System.in);
+		db = new Database();
+	}
+
+	void menu(){
+		System.out.println("\tMenu");
+		System.out.println("(c)Create product");
+		System.out.println("(d)Delete product");
+		System.out.println("(r)Restock product");
+		System.out.println("(p)List products");
+
+		System.out.println("(s)Run server");
+		System.out.println("(q)Exit");
+
+		String option = sc.nextLine();
+		switch(option){
+			case "d":
+				deleteProduct();
+				menu();
+				break;
+			case "r":
+				restockProduct();
+				menu();
+				break;
+			case "c":
+				createProduct();
+				menu();
+				break;
+			case "s":
+				init();
+				break;
+			default: break;
+
+		}
+	}
+	void restockProduct(){
+		System.out.println("id:");
+		String id = sc.nextLine();
+		System.out.println("How many products to stock?");
+		int quantity = Integer.parseInt(sc.nextLine());
+		Product p = db.restockProduct(id, quantity);
+		if(p != null){
+			System.out.println(p.getName()+" succesfully stocked!");
+		}else{
+			System.out.println("Error stocking product!");
+		}
+	}
+	void deleteProduct(){
+		System.out.println("id:");
+		String id = sc.nextLine();
+		if(db.deleteProduct(id)){
+			System.out.println("Product deleted");
+		}
 	}
 	void init(){
 		try{
 			while(true){
-				serverSocket = new ServerSocket(8081);
+				serverSocket = new ServerSocket(port);
 				System.out.println("Waiting for connections");
 				socket = serverSocket.accept();
 				System.out.println("Connection from:\n"+serverSocket);
@@ -43,19 +97,20 @@ public class Server{
 				Database db = new Database();
 				oos.writeObject(db.getProducts());
 
-				ArrayList<Product> boughtProducts = (ArrayList<Product>)ois.readObject();
-				for(Product p : boughtProducts){
-					db.buyProduct(p.getId(),1);
+				ArrayList<String> boughtProducts = (ArrayList<String>)ois.readObject();
+				for(String p : boughtProducts){
+					db.buyProduct(p,1);
 				}
-				db.printProducts();
-				
+				oos.writeObject(db.getProducts());
+
 				socket.close();
 				oos.close();
 				serverSocket.close();
 
 			}
 		}catch(Exception e){
-			System.out.println(e);
+			System.out.println("Error connecting client");
+			init();
 		}
 	}
 	
@@ -85,7 +140,6 @@ public class Server{
 				Files.copy(selectedFile.toPath(),
 						new File("./server_res/"+id+name).toPath(),
 						StandardCopyOption.REPLACE_EXISTING); 
-				Database db = new Database();
 				Product p = new Product(id,name,description,id+selectedFile.getName(),price,stock);
 				db.addProduct(p); 
 				

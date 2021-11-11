@@ -54,13 +54,13 @@ public class ShoppingCart{
 	void clear(){
 		this.cart = new HashMap<String, Item>();
 	}
-	ArrayList<Product> checkout(){
+	ArrayList<String> checkout(){
 		ArrayList<Item> products = new ArrayList<Item>(cart.values());
-		ArrayList<Product> toBuy = new ArrayList<Product>();
+		ArrayList<String> toBuy = new ArrayList<String>();
 
 		for(Item i: products){
 			for(int j = 1;j<=i.quantity;j++){
-				toBuy.add(i.product);
+				toBuy.add(i.id);
 			}
 			System.out.println(i.product.getName());
 			System.out.println("\tQuantity:"+i.quantity+"\n\t"+"Price:"+i.price);
