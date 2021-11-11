@@ -1,19 +1,22 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 
 public class ShoppingCart{
 
 	private HashMap<String,Item> cart;
-	
+	private double total;
 	public ShoppingCart(){
 		cart = new HashMap<String,Item>();
+		total = 0.0;
 	}
 	void addProduct(Product p, int quantity){
 
 		if(cart.containsKey(p.getId())){
-			if(cart.get(p.getId()).quantity<=p.getStock()){
+			if((cart.get(p.getId()).quantity+quantity)<=p.getStock()){
 				cart.get(p.getId()).quantity += quantity;
+				System.out.println("Product(s) added!");
 			}else{
 				System.out.println("Not enough stock!");
 			}
@@ -26,8 +29,18 @@ public class ShoppingCart{
 			}
 		}
 	}
-	void removeProduct(Product p){
-		cart.remove(p.getId());
+	void removeProduct(Product p,int quantity){
+		if(cart.containsKey(p.getId())){
+			if((cart.get(p.getId()).quantity-quantity)>0){
+				cart.get(p.getId()).quantity -= quantity;
+				System.out.println("Product(s) removed!");
+			}else{
+				cart.remove(p.getId());
+				System.out.println("Deleting product from your cart");
+			}
+		}else{
+			System.out.println("This product is not in your cart!");
+		}
 	}
 	void printShoppingCart(){
 		ArrayList<Item> products = new ArrayList<Item>(cart.values());
@@ -38,7 +51,27 @@ public class ShoppingCart{
 			System.out.println(i.toString());
 		}
 	}
-	public class Item{
+	ArrayList<Product> checkout(){
+		ArrayList<Item> products = new ArrayList<Item>(cart.values());
+		ArrayList<Product> toBuy = new ArrayList<Product>();
+
+		for(Item i: products){
+			for(int j = 1;j<=i.quantity;j++){
+				toBuy.add(i.product);
+			}
+			System.out.println(i.product.getName());
+			System.out.println("\tQuantity:"+i.quantity+"\n\t"+"Price:"+i.price);
+			double subtotal = i.quantity * i.price;
+			System.out.println("\tSubtotal:"+subtotal);
+			total += subtotal;
+		}
+		System.out.println("Total: "+total);
+		return toBuy;
+	}
+	ArrayList<Item> getItems(){
+		return new ArrayList<Item>(cart.values());
+	}
+	private class Item{
 		int quantity;
 		double price;
 		Product product;

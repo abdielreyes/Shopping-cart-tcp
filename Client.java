@@ -1,4 +1,5 @@
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,8 @@ public class Client{
 	private HashMap<String, Product> products;
 	private ShoppingCart shoppingCart;
 	Scanner sc = new Scanner(System.in);
+	ObjectInputStream ois;
+	ObjectOutputStream oos;
 	public static void main(String[] args){
 		Client c = new Client();
 		c.init();
@@ -23,7 +26,7 @@ public class Client{
 	void init(){
 		try{
 			socket = new Socket(host, port);
-			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+			ois = new ObjectInputStream(socket.getInputStream());
 			
 			products = (HashMap<String, Product>) ois.readObject();
 			shoppingCart = new ShoppingCart();
@@ -55,9 +58,40 @@ public class Client{
 				p = product;
 			}
 		}
-		shoppingCart.addProduct(p, quantity);
-		menu();
-
+		if(p == null){
+			System.out.println("Product not found");
+		}else{
+			shoppingCart.addProduct(p, quantity);
+		}
+	}
+	void removeProduct(){
+		System.out.println("id: ");
+		String id = sc.nextLine();
+		System.out.println("How many products you want to remove?");
+		int quantity = Integer.parseInt(sc.nextLine());
+		Product p = null;
+		for(Product product: products.values()){
+			if(product.getId().equals(id)){
+				p = product;
+			}
+		}
+		if(p == null){
+			System.out.println("Product not found");
+		}else{
+			shoppingCart.removeProduct(p, quantity);
+		}
+	}
+	void checkout(){
+		ArrayList<Product> toBuy = shoppingCart.checkout();
+		System.out.println("Proceed with checkout? yN");
+		String op = sc.nextLine();
+		if(op.equalsIgnoreCase("y")){
+			try {
+				oos.writeObject(toBuy);
+			} catch (Exception e) {
+				System.out.println("Error buying products"+e);
+			}
+		}
 	}
 	void menu(){
 		System.out.println("\tMenu");
@@ -65,15 +99,18 @@ public class Client{
 		System.out.println("(d)Delete product");
 		System.out.println("(p)See products");
 		System.out.println("(s)My shopping cart");
+		System.out.println("(c)Checkout");
 		System.out.println("(q)Exit");
 
 		String option = sc.nextLine();
 		switch(option){
 			case "a":
 				addProduct();
+				menu();
 				break;
-			case "q":
-				System.out.println("Bye!");
+			case "d":
+				removeProduct();
+				menu();
 				break;
 			case "s":
 				shoppingCart.printShoppingCart();
@@ -83,6 +120,13 @@ public class Client{
 				System.out.println("Products");
 				printProducts();
 				menu();
+				break;
+			case "c":
+				checkout();
+				menu();
+				break;
+			case "q":
+				System.out.println("Bye!");
 				break;
 			default:
 				menu();
