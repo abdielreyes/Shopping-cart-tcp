@@ -1,12 +1,15 @@
-import java.io.*;
-import java.net.*;
+import java.io.ObjectInputStream;
+import java.lang.reflect.Array;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
 public class Client{
-	private final String host = "localhost";
-	private final int port = 3017;
-	private Socket clientSocket;
+	private final String host = "127.0.0.1";
+	private final int port = 8081;
+	private Socket socket;
+	private ArrayList<Product> products;
 	
 	public static void main(String[] args){
 		Client c = new Client();
@@ -16,20 +19,22 @@ public class Client{
 	}
 	void init(){
 		try{
-			clientSocket = new Socket(host, port);
+			socket = new Socket(host, port);
+			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 			
+			products = (ArrayList<Product>) ois.readObject();
+			printProducts();
+
+			ois.close();
+			socket.close();
 		}catch(Exception e){
 			System.out.println(e);
 		}
 
 	}
-	void getAllProducts(){
-		try {
-			ObjectInputStream inputStream = new ObjectInputStream(clientSocket.getInputStream());
-
-			inputStream.close();
-		} catch (Exception e) {
-			System.out.println(e);
+	void printProducts(){
+		for(Product product : products){
+			System.out.println(product.toString());
 		}
 	}
 	void menu(){

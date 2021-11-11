@@ -111,13 +111,15 @@ public class Database{
 		}
 		return null;
 	}
-	public void printProducts(){
+	public String printProducts(){
 
 		ArrayList<Product> a = getProducts();
+		String out = "";
 		for(int i = 0; i < a.size(); i++) {
-			System.out.println(a.get(i).toString());
-			System.out.println("\n");
+			out = out + (a.get(i).toString());
+			out = out + ("\n");
 		}
+		return out;
 
 	}
 	public void addProduct(Product p){

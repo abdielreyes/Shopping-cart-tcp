@@ -19,6 +19,15 @@ public class Product implements Serializable {
 		this.description = description;
 		this.image = image;
 	}
+	public Product(String id,String name, String description,String image, double price, int stock ) {
+		super();
+		this.id = id;
+		this.price = price;
+		this.stock = stock;
+		this.name = name;
+		this.description = description;
+		this.image = image;
+	}
 	
 
 	public double getPrice(){

@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Scanner;
+import java.util.UUID;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -14,13 +15,14 @@ import javax.swing.JFrame;
 
 public class Server{
 	
-	ServerSocket serverSocket;
-	Socket socket;
-	ObjectInputStream InputStream;
-	ObjectOutputStream OutputStream;
+	private ServerSocket serverSocket;
+	private Socket socket;
+	private ObjectInputStream InputStream;
+	private ObjectOutputStream OutputStream;
+	private static final int port = 8081;
 	public static void main(String[] args){
 		Server s = new Server();
-		
+		s.init();
 		// s.createProduct();
 	}
 	public Server(){
@@ -28,19 +30,29 @@ public class Server{
 	}
 	void init(){
 		try{
-			serverSocket = new ServerSocket(3017);
-			System.out.println("Waiting for connections");
-			socket = serverSocket.accept();
-			System.out.println("Connection from"+serverSocket);
+			while(true){
+				serverSocket = new ServerSocket(8081);
+				System.out.println("Waiting for connections");
+				socket = serverSocket.accept();
+				System.out.println("Connection from:\n"+serverSocket);
 
-	
-			ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-			ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+				ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
 
+
+				Database db = new Database();
+				oos.writeObject(db.getProducts());
+						
+				
+				socket.close();
+				oos.close();
+				serverSocket.close();
+
+			}
 		}catch(Exception e){
 			System.out.println(e);
 		}
 	}
+	
 
 	public void createProduct(){
 		String name;
@@ -57,15 +69,18 @@ public class Server{
 		System.out.println("Stock: ");
 		stock = sc.nextInt();
 		sc.close();
+		String id = UUID.randomUUID().toString();
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
 		int result = fileChooser.showOpenDialog(new JFrame("Choose File"));
 		if (result == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = fileChooser.getSelectedFile();
 			try {
-				Files.copy(selectedFile.toPath(),new File("./server_res/"+name).toPath(),StandardCopyOption.REPLACE_EXISTING); 
+				Files.copy(selectedFile.toPath(),
+						new File("./server_res/"+id+name).toPath(),
+						StandardCopyOption.REPLACE_EXISTING); 
 				Database db = new Database();
-				Product p = new Product(name,description,selectedFile.getName(),price,stock);
+				Product p = new Product(id,name,description,selectedFile.getName(),price,stock);
 				db.addProduct(p); 
 				
 			} catch (Exception e) {
