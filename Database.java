@@ -13,7 +13,7 @@ public class Database{
 	public Database(){
 		initDB();
 	}
-	ArrayList<Product> getProducts(){
+	HashMap<String,Product> getProducts(){
 		try {
 			FileInputStream fis = new FileInputStream(db_file);
 			ObjectInputStream ois = new ObjectInputStream(fis);
@@ -21,7 +21,7 @@ public class Database{
 			products = (HashMap<String, Product>) ois.readObject();
 			ois.close();
 			fis.close();
-			return new ArrayList<Product>(products.values());
+			return products;
         }catch (Exception e) {
 			System.out.println(e);
 		}
@@ -113,7 +113,7 @@ public class Database{
 	}
 	public String printProducts(){
 
-		ArrayList<Product> a = getProducts();
+		ArrayList<Product> a = new ArrayList<Product>(getProducts().values());
 		String out = "";
 		for(int i = 0; i < a.size(); i++) {
 			out = out + (a.get(i).toString());

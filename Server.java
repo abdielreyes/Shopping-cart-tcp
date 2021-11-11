@@ -22,8 +22,8 @@ public class Server{
 	private static final int port = 8081;
 	public static void main(String[] args){
 		Server s = new Server();
+	//	s.createProduct();
 		s.init();
-		// s.createProduct();
 	}
 	public Server(){
 		
@@ -80,7 +80,7 @@ public class Server{
 						new File("./server_res/"+id+name).toPath(),
 						StandardCopyOption.REPLACE_EXISTING); 
 				Database db = new Database();
-				Product p = new Product(id,name,description,selectedFile.getName(),price,stock);
+				Product p = new Product(id,name,description,id+selectedFile.getName(),price,stock);
 				db.addProduct(p); 
 				
 			} catch (Exception e) {
