@@ -4,12 +4,11 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
-
-
+import com.itextpdf.*;
 
 public class Client{
 	private final String host = "127.0.0.1";
-	private final int port = 8081;
+	private final int port = 3017;
 	private Socket socket;
 	private HashMap<String, Product> products;
 	private ShoppingCart shoppingCart;

@@ -20,7 +20,7 @@ public class Server{
 	private Socket socket;
 	private ObjectInputStream InputStream;
 	private ObjectOutputStream OutputStream;
-	private static final int port = 8081;
+	private static final int port = 3017;
 	private Scanner sc;
 	private Database db;
 	public static void main(String[] args){

@@ -1,8 +1,8 @@
 #! /bin/bash
 
 echo "Compiling files.."
-javac Database.java
-javac Product.java
-javac Server.java
+javac -d "classes" Database.java
+javac -d "classes" Product.java
+javac -d "classes" Server.java
 echo "Running server..."
-java Server
+java -d "classes" Server
