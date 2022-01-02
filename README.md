@@ -1,1 +1,1 @@
-# redes_p1
+# A Shopping cart using tcp sockets in java
