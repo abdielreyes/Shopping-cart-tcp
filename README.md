@@ -1,1 +1,1 @@
-# A Shopping cart using tcp sockets in java
+# A Shopping cart using tcp sockets with java
