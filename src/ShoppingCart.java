@@ -1,6 +1,15 @@
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfString;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 
 
 public class ShoppingCart{
@@ -58,6 +67,22 @@ public class ShoppingCart{
 		ArrayList<Item> products = new ArrayList<Item>(cart.values());
 		ArrayList<String> toBuy = new ArrayList<String>();
 
+		Document doc = new Document();
+		try {
+			PdfWriter.getInstance(doc,new FileOutputStream("./receipt.pdf"));
+		} catch (DocumentException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		doc.open();
+		PdfPTable table = new PdfPTable(5);
+		table.addCell("id");
+		table.addCell("name");
+		table.addCell("Price");
+		table.addCell("Quantity");
+		table.addCell("Subtotal");
+
 		for(Item i: products){
 			for(int j = 1;j<=i.quantity;j++){
 				toBuy.add(i.id);
@@ -66,8 +91,23 @@ public class ShoppingCart{
 			System.out.println("\tQuantity:"+i.quantity+"\n\t"+"Price:"+i.price);
 			double subtotal = i.quantity * i.price;
 			System.out.println("\tSubtotal:"+subtotal);
+			table.addCell(i.product.getId());
+			table.addCell(i.product.getName());
+			table.addCell(String.valueOf(i.product.getPrice()));
+			table.addCell(String.valueOf(i.quantity));
+			table.addCell(String.valueOf(subtotal));
 			total += subtotal;
+
 		}
+		try {
+
+			doc.add(table);
+			doc.add(new Paragraph("Total = "+total));
+		} catch (DocumentException e) {
+			e.printStackTrace();
+		}
+		doc.close();
+
 		System.out.println("Total: "+total);
 		return toBuy;
 	}
@@ -90,6 +130,4 @@ public class ShoppingCart{
 			return "quantity: "+quantity+"\nProduct: "+product.toString();
 		}
 	}
-	
-
 }

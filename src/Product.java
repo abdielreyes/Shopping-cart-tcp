@@ -1,3 +1,4 @@
+
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -68,6 +69,4 @@ public class Product implements Serializable {
         return "id:" + id +",\n name:"+name+",\n description:"+description+",\n image:"+image+",\n stock:"+stock+",\n price:"+price+"";
     }
 
-	
-	
 }

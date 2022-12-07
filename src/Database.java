@@ -1,3 +1,4 @@
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,8 +14,27 @@ public class Database{
 	public Database(){
 		initDB();
 	}
+	private void initDB(){
+		//se eligio un HashMap para acceder rapido a los productos
+		try{
+			boolean fileExists = new File(db_file).exists();
+			if(!fileExists){
+				FileOutputStream fos = new FileOutputStream(db_file);
+				ObjectOutputStream oos = new ObjectOutputStream(fos);
+				HashMap<String, Product> products = new HashMap<String, Product>();
+				oos.writeObject(products);
+
+				oos.close();
+				fos.close();
+				System.out.println("Database created");
+			}
+		}catch(Exception e){
+			System.out.println("Error creating Database\n"+e);
+		}
+	}
 	HashMap<String,Product> getProducts(){
 		try {
+
 			FileInputStream fis = new FileInputStream(db_file);
 			ObjectInputStream ois = new ObjectInputStream(fis);
 			HashMap<String, Product> products = new HashMap<String, Product>();
@@ -153,21 +173,5 @@ public class Database{
 		}
 
 	}
-	private void initDB(){
-		try{
-			boolean fileExists = new File(db_file).exists();
-			if(!fileExists){
-				FileOutputStream fos = new FileOutputStream(db_file);
-				ObjectOutputStream oos = new ObjectOutputStream(fos);
-				HashMap<String, Product> products = new HashMap<String, Product>();
-				oos.writeObject(products);
-				
-				oos.close();
-				fos.close();
-				System.out.println("Database created");
-			}
-		}catch(Exception e){
-			System.out.println("Error creating Database\n"+e);
-		}
-	}
+
 }
